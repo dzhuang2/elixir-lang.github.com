@@ -291,11 +291,11 @@ Instead of receiving the registered process name as argument, we have simply dec
 
 Finally, in the `init/1` callback, we are marking the worker as `:temporary`. This means that if the bucket dies, it won't be restarted! That's because we only want to use the supervisor as a mechanism to group the buckets. The creation of buckets should always pass through the registry.
 
-Run `iex -S mix` so we can give our new supervisor a try:
+Since we changed the supervisor's name to `KV.Bucket.Supervisor`, we must update the `start/2` in `\lib\kv.ex` from `KV.Supervisor.start_link` to `KV.Bucket.Supervisor.start_link` to make sure that the app starts correctly. Now we can run `iex -S mix` and give our new supervisor a try:
 
 ```iex
-iex> {:ok, _} = KV.Bucket.Supervisor.start_link
-{:ok, #PID<0.70.0>}
+iex> KV.Bucket.Supervisor.start_link
+{:error, {:already_started, #PID<0.70.0>}}
 iex> {:ok, bucket} = KV.Bucket.Supervisor.start_bucket()
 {:ok, #PID<0.72.0>}
 iex> KV.Bucket.put(bucket, "eggs", 3)
